@@ -3,11 +3,7 @@
 Homebridge is a lightweight NodeJS server you can run on your home network that emulates the iOS HomeKit API. [Learn more about Homebridge](https://github.com/nfarina/homebridge)
 
 This is a plugin to control your Thinking Cleaner via HomeKit. 
-Since Siri supports devices added through HomeKit, this means that with Homebridge you can ask Siri to control your Thinking Cleaner! For example you can say:
-
- * _Siri, turn Dusty on._
- 
-and your Roomba will start cleaning.
+Since Siri supports devices added through HomeKit, this means that with Homebridge you can ask Siri to control your Thinking Cleaner! For example you can say _`Siri, turn Dusty on.`_ and your Roomba will start cleaning!
 
 Or you can use a Homekit app for iOS to create scenes and start claning your house when you say: 
 
@@ -32,7 +28,7 @@ As easy as that! Now let's configure the plugin.
 
 **We expect you have created a `config.json` already using the steps on the [Homebridge](https://github.com/nfarina/homebridge) page**
 
-Now we are going to add the Thinking Cleaner Accessore to the `config.json` file. In the `config.json` add the following to the `accessories` section:
+Now we are going to add the Thinking Cleaner accessory to the `config.json` file. In the `config.json` add the following to the `accessories` section:
 
 ```JSON
 {
