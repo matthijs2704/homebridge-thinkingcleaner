@@ -71,3 +71,29 @@ Now you should be able to run Homebridge again and the Thinking Cleaner plugin r
 Homebridge is now ready to receive commands to control your Thinking Cleaner via HomeKit!
 
 **Siri note**: The way I added the Thinking Cleaner to HomeKit is by pretending the Thinking Cleaner is a switch: turn on to start cleaning and turn off to stop and dock. Note that you can't say _`Siri, start cleaning.`_ as HomeKit doesn't support (robot) vacuum cleaners (yet)
+
+# License
+The MIT License (MIT)
+
+Copyright (c) 2016 Matthijs Logemann
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+- Roomba is a trademark of iRobot Corporation
+- Thinking Cleaner is a product of Thinking Bits BV

@@ -1,3 +1,8 @@
+/* 
+    TERMS OF USE
+    Open source under the MIT License.
+    Copyright 2016 Matthijs Logemann All rights reserved.
+*/
 module.exports = init;
 
 var superagent = require('superagent');
@@ -17,7 +22,7 @@ function ThinkingCleaner(log, config) {
 	this.name = config.name;
 	this.name = config.name;
 	this.ip_address = config.ip_address;
-	
+
 	if (!this.ip_address) {
 		locateTC.call(this, function(err, cleaner) {
 			if (err) throw err;
