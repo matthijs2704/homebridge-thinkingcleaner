@@ -1,0 +1,48 @@
+{
+  "name": "homebridge-thinkingcleaner",
+  "version": "0.0.1",
+  "description": "Plugin for Thinking Cleaner (thinkingcleaner.com) to use with Homebridge",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://matthijs2704@github.com/matthijs2704/homebridge-thinkingcleaner.git"
+  },
+  "keywords": [
+    "homekit",
+    "homebridge",
+    "thinkingcleaner",
+    "tc",
+    "thinkingbits",
+    "thinking",
+    "bits",
+    "ios",
+    "apple",
+	"homebridge-plugin"
+  ],
+  "author": "Matthijs Logemann",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/matthijs2704/homebridge-thinkingcleaner/issues"
+  },
+  "homepage": "https://github.com/matthijs2704/homebridge-thinkingcleaner",
+  "engines": {
+    "node": ">=0.12.0",
+    "homebridge": ">=0.2.0"
+  },
+  "maintainers": [
+    {
+      "name": "matthijs2704",
+      "email": "matthijs@logicbit.nl"
+    }
+  ],
+  "author": {
+    "email": "matthijs@logicbit.nl",
+    "name": "Matthijs Logemann"
+  },
+  "dependencies": {
+    "superagent": "^1.6.1"
+  }
+}
