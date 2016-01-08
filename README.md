@@ -34,7 +34,8 @@ Now we are going to add the Thinking Cleaner accessory to the `config.json` file
 {
     "platform": "Roomba",
     "name": "Dusty",
-    "ip_address": "127.0.0.1"
+    "ip_address": "127.0.0.1",
+	"dock_on_stop": "true"
 }   
 ```
 
@@ -44,7 +45,8 @@ For example:
     {
         "platform": "Roomba",
         "name": "Dusty",
-        "ip_address": "127.0.0.1"
+        "ip_address": "127.0.0.1",
+		"dock_on_stop": "true"
     }   
 ]
 ```
@@ -53,6 +55,8 @@ Replace `Dusty` with the name you gave your Thinking Cleaner during setup. (You 
 
 If you do not know the IP address of your Thinking Cleaner, simply leave it blank and your Thinking Cleaner will be discovered automatically.
 **NOTE**: When you have multiple Thinking Cleaner devices, you **must** fill in the IP address
+
+If you want to disable docking when you stop (or 'turn off' your Roomba using Siri/HomeKit) change `dock_on_stop` to `false`. When you do so, your Roomba will just stay at the location where it currently is when you stop it.
 
 # Using
 
