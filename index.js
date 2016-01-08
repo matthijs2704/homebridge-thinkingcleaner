@@ -18,17 +18,18 @@ function init(homebridge) {
 function ThinkingCleaner(log, config) {
 	this.log = log;
 	var that = this;
-	
+
 	this.name = config.name;
 	this.ip_address = config.ip_address;
+	this.dock_on_stop = (typeof config.dock_on_stop === 'undefined' || config.dock_on_stop === "true");
 
 	this.informationService = new Service.AccessoryInformation();
 	this.informationService.setCharacteristic(Characteristic.Name, this.name)
-			.setCharacteristic(Characteristic.Manufacturer, "Thinking Bits")
-			.setCharacteristic(Characteristic.Model, "Thinking Cleaner")
-			.setCharacteristic(Characteristic.SerialNumber, "Unknown.")
-			.setCharacteristic(Characteristic.FirmwareRevision, "Unknown");
-	
+		.setCharacteristic(Characteristic.Manufacturer, "Thinking Bits")
+		.setCharacteristic(Characteristic.Model, "Thinking Cleaner")
+		.setCharacteristic(Characteristic.SerialNumber, "Unknown")
+		.setCharacteristic(Characteristic.FirmwareRevision, "Unknown");
+
 	if (!this.ip_address) {
 		locateTC.call(this, function(err, cleaner) {
 			if (err) throw err;
@@ -36,7 +37,7 @@ function ThinkingCleaner(log, config) {
 			// TODO: Find a way to persist this
 			that.ip_address = cleaner.local_ip;
 			that.cleaner = cleaner;
-			that.log("Save the Thinking Cleaner ip address " + cleaner.local_ip + " to your config to skip discovery.");
+			that.log("Save the Thinking Cleaner IP address " + cleaner.local_ip + " to your config to skip discovery.");
 			getSWVersion.call(that);
 		});
 	}else {
@@ -45,22 +46,22 @@ function ThinkingCleaner(log, config) {
 }
 
 var getSWVersion = function() {
-		var that = this;
-//		that.informationService.setCharacteristic(Characteristic.SerialNumber, "Loading!");
+	var that = this;
+	//		that.informationService.setCharacteristic(Characteristic.SerialNumber, "Loading!");
 
-		superagent.get("http://"+that.ip_address+"/full_status.json").timeout(60000).end(function(error, response) {
-			if (error) {
-				that.log("Could not load full_status: %s", error.message);
-//				that.informationService.setCharacteristic(Characteristic.SerialNumber, "Unknown!");
-			} else {
-				var tcObj = JSON.parse(response.text);
-				that.log(tcObj.firmware.version);
-//				that.informationService.setCharacteristic(Characteristic.SerialNumber, "Loaded!");
-			}
-		});
-	}
+	superagent.get("http://"+that.ip_address+"/full_status.json").timeout(60000).end(function(error, response) {
+		if (error) {
+			that.log("Could not load full_status: %s", error.message);
+			//				that.informationService.setCharacteristic(Characteristic.SerialNumber, "Unknown!");
+		} else {
+			var tcObj = JSON.parse(response.text);
+			that.log(tcObj.firmware.version);
+			//				that.informationService.setCharacteristic(Characteristic.SerialNumber, "Loaded!");
+		}
+	});
+}
 
-	
+
 var locateTC = function(callback) {
 	var that = this;
 
@@ -100,25 +101,56 @@ var locateTC = function(callback) {
 
 ThinkingCleaner.prototype = {
 	setPowerState: function(powerOn, callback) {
-		var url;
-
 		if (powerOn) {
-			url = this.ip_address + "/command.json?command=clean";
 			this.log(this.name + ": Start cleaning");
+			superagent.get(this.ip_address + "/command.json?command=clean").end(function(error, response) {
+				if (error) {
+					this.log("Could not send clean command to Thinking Cleaner: %s", error.message);
+					callback(error);
+				} else {
+					callback();
+				}
+			});
 		} else {
-			url = this.ip_address + "/command.json?command=dock";
-			this.log(this.name + ": Start docking");
-		}
+			var that = this;
+			
+			if (!this.dock_on_stop){
 
-		superagent.get(url).end(function(error, response) {
-			if (error) {
-				this.log("Could not send command to Thinking Cleaner: %s", error.message);
-				callback(error);
-			} else {
-				callback();
+				superagent.get(this.ip_address + "/status.json").end(function(error, response) {
+					if (error) {
+						that.log("Could not send request status of Thinking Cleaner: %s", error.message);
+						callback(error);
+					} else {
+						var tcObj = JSON.parse(response.text);
+
+						if (tcObj.status.cleaning === "1"){
+						    that.log(that.name + ": Cleaning, now stopping");
+							superagent.get(that.ip_address + "/command.json?command=clean").end(function(error, response) {
+								if (error) {
+									that.log("Could not send clean command (to stop) to Thinking Cleaner: %s", error.message);
+									callback(error);
+								} else {
+									callback();
+								}
+							});
+						}else{
+							that.log(that.name + ": Not cleaning, doing nothing extra");
+							callback();
+						}
+					}
+				});
+			}else {
+				this.log(this.name + ": Start docking");
+				superagent.get(this.ip_address + "/command.json?command=dock").end(function(error, response) {
+					if (error) {
+						this.log("Could not send clean command to Thinking Cleaner: %s", error.message);
+						callback(error);
+					} else {
+						callback();
+					}
+				});
 			}
-		});
-
+		}
 	},
 
 	getPowerState: function(callback) {
@@ -149,15 +181,15 @@ ThinkingCleaner.prototype = {
 
 	getServices: function() {
 		// the default values for things like serial number, model, etc.
-var that = this;
+		var that = this;
 		var switchService = new Service.Switch(this.name);
 
 		switchService.getCharacteristic(Characteristic.On).on('set', this.setPowerState.bind(this));
 		switchService.getCharacteristic(Characteristic.On).on('get', this.getPowerState.bind(this));
-//setTimeout(function () {
-//	that.log("Hey");
-//		that.informationService.setCharacteristic(Characteristic.SerialNumber, "Hi there!");
-//}, 10)
+		//setTimeout(function () {
+		//	that.log("Hey");
+		//		that.informationService.setCharacteristic(Characteristic.SerialNumber, "Hi there!");
+		//}, 10)
 
 		return [this.informationService, switchService];
 	}
