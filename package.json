@@ -1,6 +1,6 @@
 {
   "name": "homebridge-thinkingcleaner",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Plugin for Thinking Cleaner (thinkingcleaner.com) to use with Homebridge",
   "main": "index.js",
   "scripts": {
