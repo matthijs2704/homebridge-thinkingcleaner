@@ -18,25 +18,49 @@ function init(homebridge) {
 function ThinkingCleaner(log, config) {
 	this.log = log;
 	var that = this;
-
-	this.name = config.name;
+	
 	this.name = config.name;
 	this.ip_address = config.ip_address;
 
+	this.informationService = new Service.AccessoryInformation();
+	this.informationService.setCharacteristic(Characteristic.Name, this.name)
+			.setCharacteristic(Characteristic.Manufacturer, "Thinking Bits")
+			.setCharacteristic(Characteristic.Model, "Thinking Cleaner")
+			.setCharacteristic(Characteristic.SerialNumber, "Unknown.")
+			.setCharacteristic(Characteristic.FirmwareRevision, "Unknown");
+	
 	if (!this.ip_address) {
 		locateTC.call(this, function(err, cleaner) {
 			if (err) throw err;
 
 			// TODO: Find a way to persist this
 			that.ip_address = cleaner.local_ip;
-			that.name = cleaner.name;
-			that.displayName = cleaner.name;
 			that.cleaner = cleaner;
 			that.log("Save the Thinking Cleaner ip address " + cleaner.local_ip + " to your config to skip discovery.");
-
+			getSWVersion.call(that);
 		});
+	}else {
+		getSWVersion.call(this);	
 	}
 }
+
+var getSWVersion = function() {
+		var that = this;
+//		that.informationService.setCharacteristic(Characteristic.SerialNumber, "Loading!");
+
+		superagent.get("http://"+that.ip_address+"/full_status.json").timeout(60000).end(function(error, response) {
+			if (error) {
+				that.log("Could not load full_status: %s", error.message);
+//				that.informationService.setCharacteristic(Characteristic.SerialNumber, "Unknown!");
+			} else {
+				var tcObj = JSON.parse(response.text);
+				that.log(tcObj.firmware.version);
+//				that.informationService.setCharacteristic(Characteristic.SerialNumber, "Loaded!");
+			}
+		});
+	}
+
+	
 var locateTC = function(callback) {
 	var that = this;
 
@@ -75,23 +99,6 @@ var locateTC = function(callback) {
 };
 
 ThinkingCleaner.prototype = {
-	getSWVersion: function(callback) {
-		var that = this;
-		that.log("http://"+that.ip_address+"/full_status.json")
-		superagent.get("http://"+that.ip_address+"/full_status.json").timeout(60000).end(function(error, response) {
-			if (error) {
-				that.log("Could not load full_status: %s", error.message);
-				callback("Unknown");
-			} else {
-				that.log("Data loaded from Thinking Cleaner");
-
-				var tcObj = JSON.parse(response.text);
-				that.log(tcObj.firmware.version);
-				callback(null, tcObj.firmware.version);
-			}
-		});
-	},
-
 	setPowerState: function(powerOn, callback) {
 		var url;
 
@@ -142,19 +149,16 @@ ThinkingCleaner.prototype = {
 
 	getServices: function() {
 		// the default values for things like serial number, model, etc.
-		var informationService = new Service.AccessoryInformation();
-
-		informationService.setCharacteristic(Characteristic.Name, this.name)
-			.setCharacteristic(Characteristic.Manufacturer, "Thinking Bits")
-			.setCharacteristic(Characteristic.Model, "Thinking Cleaner")
-			.setCharacteristic(Characteristic.SerialNumber, "Unknown")
-			.setCharacteristic(Characteristic.FirmwareRevision, "Test");
-
+var that = this;
 		var switchService = new Service.Switch(this.name);
 
 		switchService.getCharacteristic(Characteristic.On).on('set', this.setPowerState.bind(this));
 		switchService.getCharacteristic(Characteristic.On).on('get', this.getPowerState.bind(this));
+//setTimeout(function () {
+//	that.log("Hey");
+//		that.informationService.setCharacteristic(Characteristic.SerialNumber, "Hi there!");
+//}, 10)
 
-		return [informationService, switchService];
+		return [this.informationService, switchService];
 	}
 };
