@@ -32,7 +32,7 @@ Now we are going to add the Thinking Cleaner accessory to the `config.json` file
 
 ```JSON
 {
-    "platform": "Roomba",
+    "accessory": "Roomba",
     "name": "Dusty",
     "ip_address": "127.0.0.1",
 	"dock_on_stop": "true"
@@ -43,7 +43,7 @@ For example:
  ```JSON
 "accessories": [
     {
-        "platform": "Roomba",
+        "accessory": "Roomba",
         "name": "Dusty",
         "ip_address": "127.0.0.1",
 		"dock_on_stop": "true"
